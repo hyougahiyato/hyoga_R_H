@@ -3,14 +3,13 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="robots" content="noindex"> <!-- ← 検索対策もバッチリ！ -->
-  <title>セリフ集</title>
+  <meta name="robots" content="noindex, nofollow"> <!-- 🔒検索よけタグ -->
+  <title>セリフ表示ページ</title>
   <style>
     body {
-      font-family: sans-serif;
-      background-color: #EEE6F9;
       margin: 0;
       padding: 20px;
+      background-color: #F3E8FF; /* 🔸薄紫の背景 */
     }
 
     h2 {
@@ -68,11 +67,28 @@
       border-radius: 8px;
     }
 
-    .notice {
-      color: #883B28;
+    /* 🔔 ⚠️ *R* のスタイル */
+    .notice-gradient {
       font-weight: bold;
       font-size: 0.95em;
       text-align: center;
+      display: block;
+      animation: blink 1s infinite;
+    }
+
+    .gradient-r {
+      background: linear-gradient(to right, yellow, orange, red);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @keyframes blink {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
     }
 
     .sub-notice {
@@ -106,7 +122,9 @@
     <button onclick="copyText()" class="copy-button">コピー</button>
   </div>
 
-  <p class="notice">※完全アウトなR18禁出ます※</p>
+  <!-- 🔔 グラデーションはRだけ -->
+  <p class="notice-gradient">⚠️ *<span class="gradient-r">完全アウトなR18禁が出ます</span>*</p>
+
   <p class="sub-notice">※このページは非公開です。URLを知っている人だけが閲覧できます。</p>
   <p class="pronoun-notice">！一人称〇、二人称□、三人称△△（ここでは複数系、おまえらやあいつらなどの言葉を指します）！</p>
 
