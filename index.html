@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="robots" content="noindex, nofollow"> <!-- 🔒検索よけタグ -->
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow" />
   <title>セリフ表示ページ</title>
   <style>
     body {
@@ -102,6 +102,89 @@
       font-size: 0.85em;
       text-align: center;
     }
+
+    /* ▼▼ 下線アニメーション追加部分 ▼▼ */
+
+    /* 1. 緑の波紋風下線 */
+    a.wavy-underline {
+      position: relative;
+      color: #008000; /* ← 文字色は緑のまま */
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    a.wavy-underline::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%) scaleX(0);
+      transform-origin: center;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, #00c853, #64dd17);
+      transition: transform 0.4s ease;
+      border-radius: 2px;
+    }
+
+    a.wavy-underline:hover::after {
+      transform: translateX(-50%) scaleX(1);
+    }
+
+    a.wavy-underline:active::after {
+      background: orange;
+      transition: background 0.1s;
+    }
+
+    /* 2. 青の下から上にスーッと現れる下線 */
+    a.slide-underline {
+      position: relative;
+      color: #F875DD; /* ← 文字色はピンクに */
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    a.slide-underline::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(to top, transparent, #42a5f5);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.3s ease;
+    }
+
+    a.slide-underline:hover::after {
+      transform: scaleY(1);
+    }
+
+    a.slide-underline:active::after {
+      background: orange;
+      transition: background 0.1s;
+    }
+
+    /* ▲▲ 下線アニメーションここまで ▲▲ */
+
+    /* ★★ ここから修正：リンクコンテナを画面下から30px上に固定表示 ★★ */
+    .link-container-fixed-bottom {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 600px;
+      width: 90%;
+      display: flex;
+      justify-content: space-between;
+      z-index: 10;
+      background-color: rgba(255,255,255,0.9);
+      padding: 5px 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.15);
+    }
+    /* ★★ 修正ここまで ★★ */
   </style>
 </head>
 <body>
@@ -127,6 +210,14 @@
 
   <p class="sub-notice">※このページは非公開です。URLを知っている人だけが閲覧できます。</p>
   <p class="pronoun-notice">！一人称〇、二人称□、三人称△△（ここでは複数系、おまえらやあいつらなどの言葉を指します）！</p>
+
+  <!-- ★★ リンク部分（画面下から30px上に固定配置） -->
+  <div class="link-container-fixed-bottom">
+    <!-- 緑リンク -->
+    <a href="https://nanos.jp/hyougahiyato4/" class="wavy-underline" style="text-align: left;">🌿 ナノに戻る</a>
+    <!-- 青リンク -->
+    <a href="https://hyougahiyato.github.io/random_s_hh_h/" class="slide-underline" style="text-align: right;">🌊 ランダムセリフメーカーに戻る</a>
+  </div>
 
   <script src="script1.js"></script>
 </body>
