@@ -1,5 +1,5 @@
 
-et data = [];
+let data = [];
 
 // 表示要素の取得
 const outputText = document.getElementById("outputText");
