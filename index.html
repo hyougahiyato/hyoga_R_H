@@ -4,84 +4,179 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>セリフ表示ページ</title>
   <style>
+    /* 全体の設定 */
     body {
       margin: 0;
       padding: 20px;
       background-color: #F3E8FF; /* 🔸薄紫の背景 */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 見やすいフォント */
+      color: #333; /* 基本の文字色 */
     }
 
+    /* ページタイトル */
     h2 {
       font-size: 1.6em;
       text-align: center;
-      color: gray;
+      color: #878280; /* ここをランダムボタンの文字色に合わせました */
       background-color: #AEEEEE;
       padding: 10px;
       border-radius: 8px;
       width: 90%;
-      margin: 0 auto;
+      max-width: 600px; /* 最大幅 */
+      margin: 0 auto 80px; /* 上下中央寄せ、下部に余白 */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 影 */
     }
 
+    /* ボタンの共通スタイル */
     button {
-      cursor: pointer;
+      cursor: pointer; /* マウスカーソルを指マークに */
+      border: none; /* デフォルトの枠線をなくす */
+      border-radius: 8px; /* 丸み */
+      transition: background-color 0.3s ease; /* ホバー時のアニメーション */
+    }
+    button:hover {
+      opacity: 0.9; /* 少し透明に */
+    }
+    button:active {
+      transform: translateY(1px); /* 押したときに少し沈む */
     }
 
+    /* ランダム表示ボタン */
+    .random-button {
+      padding: 12px 24px;
+      font-size: 1em;
+      background-color: #1E90FF;
+      color: #878280; /* ここを #878280 に変更しました */
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 80px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* ジャンル＆文字数表示のラッパー */
+    /* main-boxの真上、右寄せに配置 */
+    .genre-counter-wrapper {
+      max-width: 600px;
+      width: 90%;
+      margin: 0 auto; /* 中央寄せ */
+      text-align: right; /* 右寄せ */
+      font-size: 0.9em;
+      color: #DE0062; /* ピンク（マゼンタ）の指定 */
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      line-height: 1.4em;
+      margin-bottom: 5px; /* main-boxとの間に少し隙間 */
+      
+      /* 初期は非表示 */
+      visibility: hidden; /* display: none; の代わりに visibility を使用 */
+      opacity: 0; /* 初期は透明 */
+      transition: opacity 0.3s ease, visibility 0.3s ease; /* スムーズな表示/非表示 */
+    }
+    /* JavaScriptで'visible'クラスが追加されたら表示される */
+    .genre-counter-wrapper.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* ジャンル＆文字数表示のspan要素 */
+    .genre-counter-wrapper span {
+      display: block; /* 縦並びを維持 */
+      margin-left: 0;
+      padding: 0;
+      border: none;
+      min-width: auto;
+      text-align: right; /* 各行を右寄せ */
+      white-space: nowrap; /* テキストが途中で改行されないように */
+    }
+
+    /* メインのセリフ表示ボックス */
     .main-box {
       background-color: #001F3F;
       color: lightblue;
       border: 2px solid #ccc;
       padding: 20px;
-      margin: 20px auto 0;
+      margin: 0 auto;
       width: 90%;
       max-width: 600px;
       border-radius: 12px;
       font-size: 1.2em;
       text-align: center;
-      position: relative;
+      position: relative; /* 子要素のabsolute配置の基準 */
+      min-height: 80px; /* 最小の高さ */
+      display: flex; /* 中央揃えのためにflexboxを使用 */
+      align-items: center; /* 垂直方向中央 */
+      justify-content: center; /* 水平方向中央 */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 1; /* 他の要素より手前に */
     }
 
+    /* セリフ表示部分 */
+    #outputText {
+      word-wrap: break-word; /* 長い単語でも改行 */
+      max-width: 100%; /* 親要素の幅に合わせる */
+    }
+
+    /* コピーしましたメッセージ */
+    /* コピーボタンの真上に表示されるように調整 */
     #copyMsg {
+      position: absolute; /* 親要素 (.copy-button-container) に対して絶対配置 */
+      bottom: calc(100% + 5px); /* コピーボタンコンテナの高さ+5px上 */
+      left: 0; /* コピーボタンと同じ左端 */
       color: #fff;
+      background-color: rgba(0,0,0,0.7); /* 半透明の黒背景 */
+      padding: 5px 10px;
+      border-radius: 5px;
       font-size: 0.8em;
-      margin-top: 10px;
-      opacity: 0;
-      transition: opacity 0.5s;
+      opacity: 0; /* 初期非表示 */
+      transition: opacity 0.5s ease-out; /* フェードイン・アウト */
+      white-space: nowrap; /* テキストが途中で改行されないように */
+      z-index: 2; /* 手前に表示 */
     }
 
+    /* コピーボタンを囲むコンテナ */
+    /* main-boxのすぐ下、左寄せ */
+    .copy-button-container {
+      max-width: 600px;
+      width: 90%;
+      margin: 10px auto 20px; /* 中央寄せ */
+      text-align: left; /* コンテナ内の要素を左寄せ */
+      position: relative; /* copyMsgのabsoluteの基準 */
+    }
+
+    /* コピーボタン */
     .copy-button {
       background-color: #6A0DAD;
       color: white;
-      border: none;
       padding: 8px 14px;
       border-radius: 6px;
       cursor: pointer;
+      display: inline-block; /* text-align: left; の影響を受けるように */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
-    .random-button {
-      padding: 12px 24px;
-      font-size: 1em;
-      background-color: #1E90FF;
-      color: gray;
-      border: none;
-      border-radius: 8px;
-    }
 
-    /* 🔔 ⚠️ *R* のスタイル */
+    /* 注意書き（R18） */
     .notice-gradient {
       font-weight: bold;
       font-size: 0.95em;
       text-align: center;
       display: block;
       animation: blink 1s infinite;
+      margin-top: 80px;
+      color: #555; /* 基本文字色 */
     }
 
+    /* グラデーションテキスト */
     .gradient-r {
       background: linear-gradient(to right, yellow, orange, red);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
+    /* 点滅アニメーション */
     @keyframes blink {
       0%, 100% {
         opacity: 1;
@@ -91,26 +186,42 @@
       }
     }
 
-    .sub-notice {
+    /* サブ情報ラッパー（非公開、一人称など） */
+    .sub-pronoun-wrapper {
+      margin-top: 20px;
       text-align: center;
       font-size: 0.8em;
+      line-height: 1.2em;
+    }
+    .sub-pronoun-wrapper p {
+      margin: 2px 0;
+    }
+
+    .sub-notice {
       color: #FF3333;
     }
 
+    .sub-notice + .pronoun-notice {
+      margin-top: 1em;
+    }
+
+    /* 「一人称〇…」の文字サイズ固定13.6pxに */
     .pronoun-notice {
       color: #883B28;
-      font-size: 0.85em;
-      text-align: center;
+      font-size: 13.6px;
+      margin: 0;
     }
 
     /* ▼▼ 下線アニメーション追加部分 ▼▼ */
+    a {
+      text-decoration: none; /* デフォルトの下線をなくす */
+      transition: color 0.3s ease; /* ホバー時の色変化アニメーション */
+    }
 
     /* 1. 緑の波紋風下線 */
     a.wavy-underline {
       position: relative;
-      color: #008000; /* ← 文字色は緑のまま */
-      text-decoration: none;
-      transition: color 0.3s ease;
+      color: #008000; /* 文字色は緑のまま */
     }
 
     a.wavy-underline::after {
@@ -122,26 +233,24 @@
       transform-origin: center;
       width: 100%;
       height: 2px;
-      background: linear-gradient(90deg, #00c853, #64dd17);
+      background: linear-gradient(90deg, #00c853, #64dd17); /* グラデーション */
       transition: transform 0.4s ease;
       border-radius: 2px;
     }
 
     a.wavy-underline:hover::after {
-      transform: translateX(-50%) scaleX(1);
+      transform: translateX(-50%) scaleX(1); /* ホバーで伸びる */
     }
 
     a.wavy-underline:active::after {
-      background: orange;
+      background: orange; /* クリックで色変更 */
       transition: background 0.1s;
     }
 
     /* 2. 青の下から上にスーッと現れる下線 */
     a.slide-underline {
       position: relative;
-      color: #F875DD; /* ← 文字色はピンクに */
-      text-decoration: none;
-      transition: color 0.3s ease;
+      color: #F875DD; /* 文字色はピンクに */
     }
 
     a.slide-underline::after {
@@ -151,8 +260,8 @@
       bottom: 0;
       width: 100%;
       height: 2px;
-      background: linear-gradient(to top, transparent, #42a5f5);
-      transform: scaleY(0);
+      background: linear-gradient(to top, transparent, #42a5f5); /* グラデーション */
+      transform: scaleY(0); /* 初期非表示 */
       transform-origin: bottom;
       transition: transform 0.3s ease;
     }
@@ -168,7 +277,7 @@
 
     /* ▲▲ 下線アニメーションここまで ▲▲ */
 
-    /* ★★ ここから修正：リンクコンテナを画面下から30px上に固定表示 ★★ */
+    /* ★★ リンクコンテナを画面下から30px上に固定表示 ★★ */
     .link-container-fixed-bottom {
       position: fixed;
       bottom: 30px;
@@ -178,13 +287,49 @@
       width: 90%;
       display: flex;
       justify-content: space-between;
+      align-items: center; /* 垂直方向中央 */
       z-index: 10;
       background-color: rgba(255,255,255,0.9);
       padding: 5px 15px;
       border-radius: 8px;
       box-shadow: 0 0 8px rgba(0,0,0,0.15);
     }
-    /* ★★ 修正ここまで ★★ */
+    .link-container-fixed-bottom a {
+      flex: 1; /* 均等な幅 */
+      text-align: center; /* リンクテキストを中央寄せ */
+      padding: 5px 0; /* リンクの上下パディング */
+    }
+
+    /* 画面幅が狭い場合の調整（特にスマホ向け） */
+    @media (max-width: 800px) { /* 例: 800px以下で適用 */
+        /* ジャンルと文字数は通常フローで中央寄せ */
+        .genre-counter-wrapper {
+            margin-top: 10px; /* セリフボックスの下に余白 */
+            text-align: center; /* 中央寄せ */
+        }
+        .genre-counter-wrapper span {
+            text-align: center; /* 中央寄せ */
+        }
+        /* コピーボタンも中央寄せに */
+        .copy-button-container {
+            text-align: center;
+        }
+        .copy-button {
+             margin: 10px auto; /* 中央寄せ */
+             display: block; /* ブロック要素にして中央寄せ */
+             width: fit-content; /* 内容に合わせた幅 */
+        }
+        /* コピーしましたメッセージの位置調整 */
+        #copyMsg {
+            bottom: unset; /* 設定を解除 */
+            top: -30px; /* コピーボタンコンテナの上端から30px上 (調整) */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .notice-gradient {
+            margin-top: 40px; /* スマホでは余白を少し減らす */
+        }
+    }
   </style>
 </head>
 <body>
@@ -194,29 +339,30 @@
     <button onclick="showRandom()" class="random-button">ランダム表示</button>
   </div>
 
+  <div class="genre-counter-wrapper" id="genreCounter">
+    <span id="genreTag"></span>
+    <span id="counter"></span>
+  </div>
+
   <div class="main-box">
     <div id="outputText">▼ セリフがここに表示されます ▼</div>
-    <div id="genreTag" style="font-size: 0.9em; margin-top: 10px;"></div>
-    <div id="counter" style="font-size: 0.9em; margin-top: 5px;"></div>
     <div id="copyMsg">コピーしました！</div>
   </div>
 
-  <div style="max-width: 600px; margin: 10px auto 20px; text-align: left;">
+  <div class="copy-button-container">
     <button onclick="copyText()" class="copy-button">コピー</button>
   </div>
 
-  <!-- 🔔 グラデーションはRだけ -->
   <p class="notice-gradient">⚠️ *<span class="gradient-r">完全アウトなR18禁が出ます</span>*</p>
 
-  <p class="sub-notice">※このページは非公開です。URLを知っている人だけが閲覧できます。</p>
-  <p class="pronoun-notice">！一人称〇、二人称□、三人称△△（ここでは複数系、おまえらやあいつらなどの言葉を指します）！</p>
+  <div class="sub-pronoun-wrapper">
+    <p class="sub-notice">※このページは非公開です。URLを知っている人だけが閲覧できます。</p>
+    <p class="pronoun-notice">！一人称〇、二人称□、三人称△△（ここでは複数系、おまえらやあいつらなどの言葉を指します）！</p>
+  </div>
 
-  <!-- ★★ リンク部分（画面下から30px上に固定配置） -->
   <div class="link-container-fixed-bottom">
-    <!-- 緑リンク -->
-    <a href="https://nanos.jp/hyougahiyato4/" class="wavy-underline" style="text-align: left;">🌿 ナノに戻る</a>
-    <!-- 青リンク -->
-    <a href="https://hyougahiyato.github.io/random_s_hh_h/" class="slide-underline" style="text-align: right;">🌊 ランダムセリフメーカーに戻る</a>
+    <a href="https://nanos.jp/hyougahiyato4/" class="wavy-underline">🌿 ナノに戻る</a>
+    <a href="https://hyougahiyato.github.io/random_s_hh_h/" class="slide-underline">🌊 ランダムセリフメーカーに戻る</a>
   </div>
 
   <script src="script1.js"></script>
